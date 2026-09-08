@@ -10,6 +10,7 @@ const navItems = [
 function Sidebar() {
   return (
     <aside className="sidebar">
+        <div className="brand" style={{ fontSize: '1.5rem', color: 'var(--color-primary)' }}>FinScope</div>
       <nav>
         <ul>
           {navItems.map(({ to, label, end }) => (

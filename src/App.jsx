@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import Transactions from './pages/Transactions';
 import Summary from './pages/Summary';
+import LandingPage from './pages/LandingPage';
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
           <Route path="transactions" element={<Transactions />} />
           <Route path="summary" element={<Summary />} />
         </Route>
+        {/* Welcome/landing page route outside Layout */}
+        <Route path="/welcome" element={<LandingPage />} />
       </Routes>
     </BrowserRouter>
   );
