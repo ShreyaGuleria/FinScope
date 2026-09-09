@@ -1,0 +1,44 @@
+.landing-page {
+  height: 100vh;
+  background: linear-gradient(135deg, #0a0f33, #006d5b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.landing-page .content {
+  text-align: center;
+  max-width: 800px;
+  padding: 0 1rem;
+}
+
+.landing-page .title {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+}
+
+.landing-page .tagline {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+}
+
+.landing-page .cta-button {
+  display: inline-block;
+  background-color: var(--color-primary);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.landing-page .cta-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
