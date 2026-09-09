@@ -1,16 +1,46 @@
-# React + Vite
+# FinScope — Personal Finance Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+FinScope is a modern personal finance tracker built with React and Vite. It helps you visualize your income, track expenses, and understand your spending habits through an intuitive dashboard and interactive charts — all with data persisted locally in your browser.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 📊 **Dashboard with summary cards** — At-a-glance view of income, expenses, and net savings
+- 💾 **Transaction tracking with localStorage** — Your data persists between sessions without a backend
+- 🍩 **Doughnut chart visualization** — Powered by Chart.js for clear income vs. expense breakdowns
+- 🗺️ **Multi-page routing with React Router** — Smooth navigation across Dashboard, Transactions, and Summary pages
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+| Technology | Version |
+|---|---|
+| React | 19 |
+| Vite | Latest |
+| Chart.js + react-chartjs-2 | Latest |
+| React Router | v7 |
 
-## Expanding the Oxlint configuration
+## Getting Started
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+# 1. Clone the repository
+git clone https://github.com/ShreyaGuleria/FinScope.git
+
+# 2. Navigate into the project directory
+cd FinScope
+
+# 3. Install dependencies
+npm install
+
+# 4. Start the development server
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`.
+
+## Team
+
+| Name | Role |
+|---|---|
+| Member One | Frontend Development |
+| Member Two | UI/UX Design |
+| Member Three | Data & Chart Integration |
+| Member Four | Routing & State Management |
