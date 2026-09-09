@@ -1,0 +1,83 @@
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.summary__heading {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+}
+
+/* Scrollable container for narrow viewports */
+.summary__table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+.summary__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  background-color: var(--color-surface);
+}
+
+/* Header row */
+.summary__table thead tr {
+  background-color: rgba(96, 165, 250, 0.08);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.summary__table th {
+  padding: var(--spacing-md) var(--spacing-lg);
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* Body rows */
+.summary__table tbody tr {
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition-fast);
+}
+
+.summary__table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.summary__table tbody tr:hover {
+  background-color: rgba(96, 165, 250, 0.05);
+}
+
+.summary__table td {
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Semantic column colours */
+.summary__month {
+  color: var(--color-text-muted) !important;
+  font-weight: var(--font-weight-normal) !important;
+}
+
+.summary__income {
+  color: var(--color-secondary) !important;
+}
+
+.summary__expenses {
+  color: var(--color-danger) !important;
+}
+
+.summary__net {
+  color: var(--color-primary) !important;
+  font-weight: var(--font-weight-semibold) !important;
+}
