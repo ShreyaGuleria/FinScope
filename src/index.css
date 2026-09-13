@@ -177,6 +177,61 @@ ol {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-lg);
+    /* Animate open/close */
+    transition: width 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.sidebar--open {
+    width: var(--sidebar-width);
+}
+
+.sidebar--closed {
+    width: 0;
+    padding-inline: 0;
+}
+
+/* Hamburger toggle — floats outside overflow:hidden so it stays visible */
+.sidebar-toggle {
+    position: absolute;
+    top: var(--spacing-md);
+    right: calc(-1 * (var(--spacing-xl) + 4px));
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 36px;
+    height: 36px;
+    padding: 6px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.sidebar-toggle:hover {
+    background-color: rgba(96, 165, 250, 0.12);
+}
+
+.sidebar-toggle__bar {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-text-muted);
+    border-radius: var(--radius-full);
+    transition: background-color var(--transition-fast);
+}
+
+.sidebar-toggle:hover .sidebar-toggle__bar {
+    background-color: var(--color-primary);
+}
+
+.sidebar-brand {
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .sidebar nav ul {
@@ -214,4 +269,90 @@ ol {
     background-color: rgba(96, 165, 250, 0.18); /* blue-400 @18% */
     color: var(--color-primary);                /* bright blue-400 */
     font-weight: var(--font-weight-semibold);
+}
+
+/* ----- Animations ----- */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.summary-card {
+    animation: fadeIn 0.3s ease both;
+}
+
+.transaction-card {
+    animation: fadeIn 0.3s ease both;
+}
+
+/* ----- 404 Not Found Page ----- */
+.not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    gap: var(--spacing-md);
+    text-align: center;
+    padding: var(--spacing-xl);
+}
+
+.not-found__title {
+    font-size: 6rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.not-found__subtitle {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text);
+}
+
+.not-found__body {
+    font-size: var(--font-size-md);
+    color: var(--color-text-muted);
+    max-width: 30ch;
+}
+
+.not-found__link {
+    margin-top: var(--spacing-sm);
+    display: inline-block;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background-color: var(--color-primary-dark);
+    color: var(--color-text);
+    border-radius: var(--radius-md);
+    font-weight: var(--font-weight-semibold);
+    transition: background-color var(--transition-fast);
+}
+
+.not-found__link:hover {
+    background-color: var(--color-primary);
+    color: var(--color-background);
+}
+
+/* ----- Responsive — Mobile ----- */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        padding-inline: 0;
+    }
+
+    .sidebar--open {
+        width: var(--sidebar-width);
+        padding-inline: var(--spacing-md);
+    }
+
+    .sidebar-toggle {
+        /* On mobile, anchor it to left edge of main content area */
+        right: calc(-1 * (var(--spacing-lg) + 4px));
+    }
 }
