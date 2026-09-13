@@ -1,32 +1,52 @@
 .summary-card {
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-left: 4px solid; /* color set via inline style */
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-left: 4px solid var(--accent-color, var(--color-primary));
+  padding: 1.5rem;
   border-radius: var(--radius-lg);
-  padding: var(--spacing-lg) var(--spacing-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  transition: all var(--transition-fast);
+  position: relative;
+  overflow: hidden;
 }
 
 .summary-card:hover {
   transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.15);
   box-shadow: var(--shadow-lg);
+}
+
+.summary-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
 }
 
 .summary-card__title {
   font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
+  font-weight: 600;
   color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
+.summary-card__icon {
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+}
+
 .summary-card__amount {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-text);
-  line-height: var(--line-height-tight);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.25rem;
+}
+
+.summary-card__subtitle {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-dim);
+  font-weight: 500;
 }

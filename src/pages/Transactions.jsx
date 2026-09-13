@@ -4,18 +4,35 @@ import { loadTransactions, saveTransactions } from '../utils/storage';
 import { exportToCsv } from '../utils/exportCsv';
 import './Transactions.css';
 
-const EMPTY_FORM = { description: '', amount: '', type: 'Income', date: '' };
+const CATEGORIES = [
+  'Food & Dining',
+  'Salary & Paycheck',
+  'Housing & Rent',
+  'Utilities & Bills',
+  'Shopping',
+  'Entertainment',
+  'Investments',
+  'Other',
+];
 
-function Transactions() {
+const getTodayDate = () => new Date().toISOString().split('T')[0];
+
+export default function Transactions() {
   const [transactions, setTransactions] = useState(() => loadTransactions());
-  const [form, setForm] = useState(EMPTY_FORM);
+  const [form, setForm] = useState({
+    description: '',
+    amount: '',
+    type: 'Expense',
+    category: 'Food & Dining',
+    date: getTodayDate(),
+  });
 
-  // Filter / sort state
+  // Filter & Search states
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
+  const [categoryFilter, setCategoryFilter] = useState('All');
   const [sortOrder, setSortOrder] = useState('newest');
 
-  // Persist to localStorage whenever the list changes
   useEffect(() => {
     saveTransactions(transactions);
   }, [transactions]);
@@ -33,23 +50,30 @@ function Transactions() {
       description: form.description.trim(),
       amount: parseFloat(form.amount),
       type: form.type,
+      category: form.category,
       date: form.date,
     };
 
     setTransactions((prev) => [newTransaction, ...prev]);
-    setForm(EMPTY_FORM);
+    setForm({
+      description: '',
+      amount: '',
+      type: 'Expense',
+      category: 'Food & Dining',
+      date: getTodayDate(),
+    });
   }
 
   function handleDelete(id) {
     setTransactions((prev) => prev.filter((t) => t.id !== id));
   }
 
-  // Derived: apply search + type filter + sort
   const filteredTransactions = transactions
     .filter((t) =>
       t.description.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter((t) => typeFilter === 'All' || t.type === typeFilter)
+    .filter((t) => categoryFilter === 'All' || (t.category || 'Other') === categoryFilter)
     .sort((a, b) =>
       sortOrder === 'newest'
         ? new Date(b.date) - new Date(a.date)
@@ -57,75 +81,76 @@ function Transactions() {
     );
 
   return (
-    <div>
-      <h1 className="transactions-page__title">Transactions</h1>
+    <div className="transactions-page">
+      <div className="transactions-header">
+        <div>
+          <h1 className="transactions-title">Transactions</h1>
+          <p className="transactions-subtitle">Record and manage your daily cash flow.</p>
+        </div>
+        <button
+          className="btn-export"
+          onClick={() => exportToCsv(transactions)}
+          disabled={transactions.length === 0}
+        >
+          📥 Export CSV
+        </button>
+      </div>
 
-      {/* ── Add-Transaction Form ── */}
-      <form className="transactions-form" onSubmit={handleSubmit} noValidate>
-        <p className="transactions-form__title">Add a Transaction</p>
-
-        <div className="transactions-form__grid">
-          {/* Description – spans full width */}
-          <div className="transactions-form__group transactions-form__group--full">
-            <label className="transactions-form__label" htmlFor="description">
-              Description
-            </label>
+      {/* Add Transaction Card Form */}
+      <form className="transactions-form" onSubmit={handleSubmit}>
+        <h2 className="form-title">+ Add New Transaction</h2>
+        <div className="form-grid">
+          <div className="form-group form-group--full">
+            <label htmlFor="description">Description</label>
             <input
               id="description"
-              className="transactions-form__input"
               type="text"
               name="description"
-              placeholder="e.g. Grocery shopping"
+              placeholder="e.g. Grocery Shopping, Monthly Salary..."
               value={form.description}
               onChange={handleChange}
               required
             />
           </div>
 
-          {/* Amount */}
-          <div className="transactions-form__group">
-            <label className="transactions-form__label" htmlFor="amount">
-              Amount ($)
-            </label>
+          <div className="form-group">
+            <label htmlFor="amount">Amount ($)</label>
             <input
               id="amount"
-              className="transactions-form__input"
               type="number"
               name="amount"
               placeholder="0.00"
-              min="0.01"
               step="0.01"
+              min="0.01"
               value={form.amount}
               onChange={handleChange}
               required
             />
           </div>
 
-          {/* Type */}
-          <div className="transactions-form__group">
-            <label className="transactions-form__label" htmlFor="type">
-              Type
-            </label>
-            <select
-              id="type"
-              className="transactions-form__select"
-              name="type"
-              value={form.type}
-              onChange={handleChange}
-            >
-              <option value="Income">Income</option>
-              <option value="Expense">Expense</option>
+          <div className="form-group">
+            <label htmlFor="type">Type</label>
+            <select id="type" name="type" value={form.type} onChange={handleChange}>
+              <option value="Income">Income (+)</option>
+              <option value="Expense">Expense (-)</option>
             </select>
           </div>
 
-          {/* Date */}
-          <div className="transactions-form__group">
-            <label className="transactions-form__label" htmlFor="date">
-              Date
-            </label>
+          <div className="form-group">
+            <label htmlFor="category">Category</label>
+            <select id="category" name="category" value={form.category} onChange={handleChange}>
+              {CATEGORIES.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="date">Date</label>
             <input
               id="date"
-              className="transactions-form__input"
               type="date"
               name="date"
               value={form.date}
@@ -135,93 +160,87 @@ function Transactions() {
           </div>
         </div>
 
-        <button className="transactions-form__submit" type="submit">
-          + Add Transaction
+        <button className="btn-submit" type="submit">
+          Save Transaction
         </button>
       </form>
 
-      {/* ── History heading + Export ── */}
-      <div className="transactions-list__header">
-        <h2 className="transactions-list__heading">History</h2>
-        <button
-          id="export-csv-btn"
-          className="transactions-export-btn"
-          onClick={() => exportToCsv(transactions)}
-          disabled={transactions.length === 0}
-        >
-          ↓ Export CSV
-        </button>
+      {/* Filter & Search Bar */}
+      <div className="filter-card">
+        <div className="filter-grid">
+          <input
+            type="text"
+            className="filter-input"
+            placeholder="🔍 Search description..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <select
+            className="filter-select"
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+          >
+            <option value="All">All Types</option>
+            <option value="Income">Income</option>
+            <option value="Expense">Expense</option>
+          </select>
+
+          <select
+            className="filter-select"
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+          >
+            <option value="All">All Categories</option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className="filter-select"
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value)}
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
+        </div>
+
+        <div className="filter-count">
+          Showing <strong>{filteredTransactions.length}</strong> of {transactions.length} transactions
+        </div>
       </div>
 
-      {/* ── Filter / Search bar ── */}
-      <div className="transactions-filter-bar">
-        <input
-          id="filter-search"
-          className="transactions-filter-bar__input"
-          type="text"
-          placeholder="Search description…"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          aria-label="Search transactions"
-        />
-
-        <select
-          id="filter-type"
-          className="transactions-filter-bar__select"
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          aria-label="Filter by type"
-        >
-          <option value="All">All Types</option>
-          <option value="Income">Income</option>
-          <option value="Expense">Expense</option>
-        </select>
-
-        <select
-          id="filter-sort"
-          className="transactions-filter-bar__select"
-          value={sortOrder}
-          onChange={(e) => setSortOrder(e.target.value)}
-          aria-label="Sort order"
-        >
-          <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
-        </select>
+      {/* List */}
+      <div className="transaction-list-container">
+        {transactions.length === 0 ? (
+          <div className="empty-state-card">
+            <p>No transactions recorded yet.</p>
+            <small>Use the form above to add your first income or expense.</small>
+          </div>
+        ) : filteredTransactions.length === 0 ? (
+          <div className="empty-state-card">
+            <p>No matching transactions found.</p>
+            <small>Try clearing your search or category filters.</small>
+          </div>
+        ) : (
+          filteredTransactions.map((t) => (
+            <TransactionCard
+              key={t.id}
+              id={t.id}
+              description={t.description}
+              amount={t.amount}
+              type={t.type}
+              category={t.category}
+              date={t.date}
+              onDelete={handleDelete}
+            />
+          ))
+        )}
       </div>
-
-      {/* ── Result count ── */}
-      <p className="transactions-filter-count">
-        🔍 {filteredTransactions.length}{' '}
-        {filteredTransactions.length === 1 ? 'transaction' : 'transactions'} found
-      </p>
-
-      {/* ── Transaction List ── */}
-      {transactions.length === 0 ? (
-        <p className="transactions-list__empty">
-          No transactions yet — add one above!
-        </p>
-      ) : filteredTransactions.length === 0 ? (
-        <p className="transactions-list__empty">
-          No transactions match your filters.
-        </p>
-      ) : (
-        <ul className="transactions-list">
-          {filteredTransactions.map((t) => (
-            <li key={t.id}>
-              <TransactionCard
-                id={t.id}
-                description={t.description}
-                amount={t.amount}
-                type={t.type}
-                date={t.date}
-                onDelete={handleDelete}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   );
 }
-
-export default Transactions;

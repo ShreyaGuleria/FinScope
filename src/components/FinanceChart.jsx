@@ -1,14 +1,14 @@
-import { Chart } from "chart.js/auto";
+import "chart.js/auto";
 import { Doughnut } from "react-chartjs-2";
 
-const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
+const FinanceChart = ({ income = 0, expenses = 0 }) => {
   const data = {
     labels: ["Income", "Expenses"],
     datasets: [
       {
         data: [income, expenses],
-        backgroundColor: ["#34d399", "#f87171"],
-        borderColor: ["#059669", "#dc2626"],
+        backgroundColor: ["#10b981", "#f43f5e"],
+        borderColor: ["#047857", "#be123c"],
         borderWidth: 2,
         hoverOffset: 8,
       },
@@ -22,10 +22,10 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
       legend: {
         position: "bottom",
         labels: {
-          color: "#ffffff",
+          color: "#f8fafc",
           font: {
             size: 14,
-            family: "'Inter', sans-serif",
+            family: "'Plus Jakarta Sans', sans-serif",
           },
           padding: 20,
           usePointStyle: true,
@@ -33,30 +33,20 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
         },
       },
       title: {
-        display: true,
-        text: "Income vs Expenses",
-        color: "#ffffff",
-        font: {
-          size: 18,
-          weight: "600",
-          family: "'Inter', sans-serif",
-        },
-        padding: {
-          bottom: 20,
-        },
+        display: false,
       },
       tooltip: {
         callbacks: {
           label: (context) => {
             const value = context.parsed;
             const total = income + expenses;
-            const percentage = ((value / total) * 100).toFixed(1);
+            const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
             return ` $${value.toLocaleString()} (${percentage}%)`;
           },
         },
-        backgroundColor: "rgba(17, 24, 39, 0.9)",
+        backgroundColor: "rgba(15, 23, 42, 0.95)",
         titleColor: "#ffffff",
-        bodyColor: "#d1d5db",
+        bodyColor: "#cbd5e1",
         borderColor: "rgba(255,255,255,0.1)",
         borderWidth: 1,
         padding: 12,
@@ -72,10 +62,9 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
           maxWidth: "400px",
           margin: "0 auto",
           padding: "24px",
-          background: "rgba(17, 24, 39, 0.8)",
+          background: "var(--color-surface)",
           borderRadius: "16px",
-          border: "1px solid rgba(255, 255, 255, 0.08)",
-          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+          border: "1px solid var(--color-surface-border)",
           textAlign: "center",
         }}
       >
@@ -84,18 +73,19 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
             color: "#ffffff",
             fontSize: "18px",
             fontWeight: "600",
-            fontFamily: "'Inter', sans-serif",
-            marginBottom: "24px",
+            marginBottom: "16px",
           }}
         >
           Income vs Expenses
         </h3>
         <p style={{ color: "var(--color-text-muted)", margin: 0 }}>
-          Add transactions to see your chart 📊
+          Add transactions to view chart breakdown 📊
         </p>
       </div>
     );
   }
+
+  const savingsRate = income > 0 ? (((income - expenses) / income) * 100).toFixed(1) : 0;
 
   return (
     <div
@@ -103,24 +93,12 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
         maxWidth: "400px",
         margin: "0 auto",
         padding: "24px",
-        background: "rgba(17, 24, 39, 0.8)",
+        background: "var(--color-surface)",
         borderRadius: "16px",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+        border: "1px solid var(--color-surface-border)",
+        boxShadow: "var(--shadow-md)",
       }}
     >
-      <h3
-        style={{
-          color: "#ffffff",
-          fontSize: "18px",
-          fontWeight: "600",
-          fontFamily: "'Inter', sans-serif",
-          marginBottom: "16px",
-          textAlign: "center",
-        }}
-      >
-        Income vs Expenses
-      </h3>
       <Doughnut data={data} options={options} />
       <div
         style={{
@@ -128,11 +106,11 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
           justifyContent: "space-around",
           marginTop: "20px",
           paddingTop: "16px",
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+          borderTop: "1px solid var(--color-surface-border)",
         }}
       >
         <div style={{ textAlign: "center" }}>
-          <p style={{ color: "#9ca3af", fontSize: "12px", margin: 0 }}>
+          <p style={{ color: "#94a3b8", fontSize: "12px", margin: 0 }}>
             Net Savings
           </p>
           <p
@@ -147,7 +125,7 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
           </p>
         </div>
         <div style={{ textAlign: "center" }}>
-          <p style={{ color: "#9ca3af", fontSize: "12px", margin: 0 }}>
+          <p style={{ color: "#94a3b8", fontSize: "12px", margin: 0 }}>
             Savings Rate
           </p>
           <p
@@ -158,7 +136,7 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
               margin: "4px 0 0",
             }}
           >
-            {(((income - expenses) / income) * 100).toFixed(1)}%
+            {savingsRate}%
           </p>
         </div>
       </div>

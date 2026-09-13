@@ -1,72 +1,97 @@
+import { loadTransactions } from '../utils/storage';
 import './Summary.css';
 
-const fmt = (val) =>
-  val.toLocaleString("en-US", { style: "currency", currency: "USD" });
-
-// "2025-09" → "September 2025"
-function formatMonthLabel(key) {
-  const [year, month] = key.split('-');
-  const date = new Date(Number(year), Number(month) - 1, 1);
-  return date.toLocaleString('en-US', { month: 'long', year: 'numeric' });
-}
-
 export default function Summary() {
-  const stored = localStorage.getItem("finscope_transactions");
-  const transactions = stored ? JSON.parse(stored) : [];
+  const transactions = loadTransactions();
 
-  // Group by "YYYY-MM"
-  const monthMap = {};
-  transactions.forEach(t => {
-    const key = t.date.slice(0, 7); // "2025-09"
-    if (!monthMap[key]) {
-      monthMap[key] = { income: 0, expenses: 0 };
+  // Group by Month (YYYY-MM)
+  const monthlyMap = transactions.reduce((acc, t) => {
+    const month = t.date ? t.date.substring(0, 7) : 'Unknown';
+    if (!acc[month]) {
+      acc[month] = { month, income: 0, expenses: 0 };
     }
-    if (t.type === "Income") {
-      monthMap[key].income += Number(t.amount);
+    if (t.type === 'Income') {
+      acc[month].income += Number(t.amount);
     } else {
-      monthMap[key].expenses += Number(t.amount);
+      acc[month].expenses += Number(t.amount);
     }
-  });
+    return acc;
+  }, {});
 
-  // Sort chronologically
-  const sortedMonths = Object.keys(monthMap).sort();
+  const monthlyData = Object.values(monthlyMap).sort((a, b) => (b.month > a.month ? 1 : -1));
+
+  // Group by Category
+  const categoryMap = transactions.reduce((acc, t) => {
+    const cat = t.category || 'Other';
+    if (!acc[cat]) acc[cat] = 0;
+    acc[cat] += Number(t.amount);
+    return acc;
+  }, {});
+
+  const categoryData = Object.entries(categoryMap).sort((a, b) => b[1] - a[1]);
+
+  const fmt = (val) =>
+    val.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
   return (
-    <div className="summary">
-      <h1 className="summary__heading">Monthly Summary</h1>
-
-      <div className="summary__table-wrapper">
-        {sortedMonths.length === 0 ? (
-          <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', padding: '2rem 0' }}>
-            No data to display yet.
-          </p>
-        ) : (
-          <table className="summary__table">
-            <thead>
-              <tr>
-                <th>Month</th>
-                <th>Income</th>
-                <th>Expenses</th>
-                <th>Net</th>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedMonths.map((key) => {
-                const { income, expenses } = monthMap[key];
-                const net = income - expenses;
-                return (
-                  <tr key={key}>
-                    <td className="summary__month">{formatMonthLabel(key)}</td>
-                    <td className="summary__income">{fmt(income)}</td>
-                    <td className="summary__expenses">{fmt(expenses)}</td>
-                    <td className="summary__net">{fmt(net)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        )}
+    <div className="summary-page">
+      <div className="summary-header">
+        <h1 className="summary-title">Monthly & Category Summary</h1>
+        <p className="summary-subtitle">Overview of monthly cash flow and category allocation.</p>
       </div>
+
+      {transactions.length === 0 ? (
+        <div className="summary-empty">
+          <p>No transactions available to generate summary analytics.</p>
+        </div>
+      ) : (
+        <>
+          {/* Monthly Breakdown Table */}
+          <div className="summary-card-table">
+            <h2 className="summary-section-title">📅 Monthly Breakdown</h2>
+            <div className="table-responsive">
+              <table className="summary-table">
+                <thead>
+                  <tr>
+                    <th>Month</th>
+                    <th>Total Income</th>
+                    <th>Total Expenses</th>
+                    <th>Net Balance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {monthlyData.map((row) => {
+                    const net = row.income - row.expenses;
+                    return (
+                      <tr key={row.month}>
+                        <td className="font-semibold">{row.month}</td>
+                        <td className="text-income">+{fmt(row.income)}</td>
+                        <td className="text-expense">-{fmt(row.expenses)}</td>
+                        <td className={net >= 0 ? 'text-income font-bold' : 'text-expense font-bold'}>
+                          {fmt(net)}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Category Breakdown */}
+          <div className="summary-card-categories">
+            <h2 className="summary-section-title">🏷️ Category Volume</h2>
+            <div className="category-grid">
+              {categoryData.map(([cat, total]) => (
+                <div key={cat} className="category-card">
+                  <span className="category-card__name">{cat}</span>
+                  <span className="category-card__total">{fmt(total)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

@@ -1,56 +1,110 @@
+import { Link } from 'react-router-dom';
 import SummaryCard from '../components/SummaryCard';
 import FinanceChart from '../components/FinanceChart';
+import TransactionCard from '../components/TransactionCard';
+import { loadTransactions } from '../utils/storage';
 import './Dashboard.css';
 
 export default function Dashboard() {
-  const stored = localStorage.getItem("finscope_transactions");
-  const transactions = stored ? JSON.parse(stored) : [];
+  const transactions = loadTransactions();
 
   const totalIncome = transactions
-    .filter(t => t.type === "Income")
+    .filter((t) => t.type === 'Income')
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
   const totalExpenses = transactions
-    .filter(t => t.type === "Expense")
+    .filter((t) => t.type === 'Expense')
     .reduce((sum, t) => sum + Number(t.amount), 0);
 
   const netBalance = totalIncome - totalExpenses;
 
   const fmt = (val) =>
-    val.toLocaleString("en-US", { style: "currency", currency: "USD" });
+    val.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+  // Recent 3 transactions
+  const recentTransactions = transactions.slice(0, 3);
 
   return (
-    <div className="dashboard">
-      <h1 className="dashboard__heading">Dashboard</h1>
+    <div className="dashboard-page">
+      <div className="dashboard-header">
+        <div>
+          <h1 className="dashboard-title">Dashboard Overview</h1>
+          <p className="dashboard-subtitle">Monitor your real-time balance and expense metrics.</p>
+        </div>
+        <Link to="/transactions" className="btn-add-quick">
+          + Add Transaction
+        </Link>
+      </div>
 
-      <div className="dashboard__cards">
+      {/* Summary Cards Row */}
+      <div className="dashboard-cards">
         <SummaryCard
           title="Total Income"
           amount={fmt(totalIncome)}
           color="var(--color-secondary)"
-          subtitle="all time"
+          icon="💵"
+          subtitle="All time total"
         />
         <SummaryCard
           title="Total Expenses"
           amount={fmt(totalExpenses)}
           color="var(--color-danger)"
-          subtitle="all time"
+          icon="💸"
+          subtitle="All time total"
         />
         <SummaryCard
           title="Net Balance"
           amount={fmt(netBalance)}
           color="var(--color-primary)"
-          subtitle="all time"
+          icon="⚖️"
+          subtitle="Net cash balance"
         />
       </div>
 
-      {transactions.length === 0 ? (
-        <p style={{ textAlign: 'center', color: 'var(--color-text-muted)', marginTop: '2rem' }}>
-          No transactions yet — go add some in the Transactions page!
-        </p>
-      ) : (
-        <FinanceChart income={totalIncome} expenses={totalExpenses} />
-      )}
+      {/* Analytics Section */}
+      <div className="dashboard-grid">
+        <div className="dashboard-card-section">
+          <h2 className="section-title">Income vs Expenses</h2>
+          {transactions.length === 0 ? (
+            <div className="empty-dashboard-chart">
+              <p>No transactions to display.</p>
+              <Link to="/transactions" className="btn-text-link">
+                Add your first income or expense →
+              </Link>
+            </div>
+          ) : (
+            <FinanceChart income={totalIncome} expenses={totalExpenses} />
+          )}
+        </div>
+
+        <div className="dashboard-card-section">
+          <div className="section-header-inline">
+            <h2 className="section-title">Recent Activity</h2>
+            <Link to="/transactions" className="btn-text-link">
+              View All
+            </Link>
+          </div>
+
+          {recentTransactions.length === 0 ? (
+            <p className="empty-recent-text">No recent transactions recorded.</p>
+          ) : (
+            <div className="recent-list">
+              {recentTransactions.map((t) => (
+                <TransactionCard
+                  key={t.id}
+                  id={t.id}
+                  description={t.description}
+                  amount={t.amount}
+                  type={t.type}
+                  category={t.category}
+                  date={t.date}
+                  onDelete={() => {}}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
