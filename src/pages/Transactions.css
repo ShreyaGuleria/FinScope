@@ -145,3 +145,123 @@
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-lg);
 }
+
+/* ── History header row (heading + export button) ── */
+.transactions-list__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Override the heading margin since the wrapper now owns the spacing */
+.transactions-list__header .transactions-list__heading {
+  margin-bottom: 0;
+}
+
+/* Export CSV button */
+.transactions-export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.transactions-export-btn:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background-color: rgba(96, 165, 250, 0.06);
+}
+
+.transactions-export-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Search / Filter bar ── */
+.transactions-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-sm) var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+}
+
+.transactions-filter-bar__input {
+  flex: 1 1 180px;
+  min-width: 0;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.transactions-filter-bar__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.transactions-filter-bar__input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
+}
+
+.transactions-filter-bar__select {
+  flex: 0 0 auto;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs) calc(var(--spacing-md) * 2.2) var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  outline: none;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-sm) center;
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.transactions-filter-bar__select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.18);
+}
+
+/* ── Result count ── */
+.transactions-filter-count {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  margin-bottom: var(--spacing-md);
+  letter-spacing: 0.02em;
+}
+
+@media (max-width: 600px) {
+  .transactions-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .transactions-filter-bar__select {
+    width: 100%;
+  }
+}

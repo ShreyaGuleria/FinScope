@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import TransactionCard from '../components/TransactionCard';
 import { loadTransactions, saveTransactions } from '../utils/storage';
+import { exportToCsv } from '../utils/exportCsv';
 import './Transactions.css';
 
 const EMPTY_FORM = { description: '', amount: '', type: 'Income', date: '' };
@@ -8,6 +9,11 @@ const EMPTY_FORM = { description: '', amount: '', type: 'Income', date: '' };
 function Transactions() {
   const [transactions, setTransactions] = useState(() => loadTransactions());
   const [form, setForm] = useState(EMPTY_FORM);
+
+  // Filter / sort state
+  const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState('All');
+  const [sortOrder, setSortOrder] = useState('newest');
 
   // Persist to localStorage whenever the list changes
   useEffect(() => {
@@ -37,6 +43,18 @@ function Transactions() {
   function handleDelete(id) {
     setTransactions((prev) => prev.filter((t) => t.id !== id));
   }
+
+  // Derived: apply search + type filter + sort
+  const filteredTransactions = transactions
+    .filter((t) =>
+      t.description.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter((t) => typeFilter === 'All' || t.type === typeFilter)
+    .sort((a, b) =>
+      sortOrder === 'newest'
+        ? new Date(b.date) - new Date(a.date)
+        : new Date(a.date) - new Date(b.date)
+    );
 
   return (
     <div>
@@ -122,16 +140,73 @@ function Transactions() {
         </button>
       </form>
 
-      {/* ── Transaction List ── */}
-      <h2 className="transactions-list__heading">History</h2>
+      {/* ── History heading + Export ── */}
+      <div className="transactions-list__header">
+        <h2 className="transactions-list__heading">History</h2>
+        <button
+          id="export-csv-btn"
+          className="transactions-export-btn"
+          onClick={() => exportToCsv(transactions)}
+          disabled={transactions.length === 0}
+        >
+          ↓ Export CSV
+        </button>
+      </div>
 
+      {/* ── Filter / Search bar ── */}
+      <div className="transactions-filter-bar">
+        <input
+          id="filter-search"
+          className="transactions-filter-bar__input"
+          type="text"
+          placeholder="Search description…"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          aria-label="Search transactions"
+        />
+
+        <select
+          id="filter-type"
+          className="transactions-filter-bar__select"
+          value={typeFilter}
+          onChange={(e) => setTypeFilter(e.target.value)}
+          aria-label="Filter by type"
+        >
+          <option value="All">All Types</option>
+          <option value="Income">Income</option>
+          <option value="Expense">Expense</option>
+        </select>
+
+        <select
+          id="filter-sort"
+          className="transactions-filter-bar__select"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value)}
+          aria-label="Sort order"
+        >
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+        </select>
+      </div>
+
+      {/* ── Result count ── */}
+      <p className="transactions-filter-count">
+        🔍 {filteredTransactions.length}{' '}
+        {filteredTransactions.length === 1 ? 'transaction' : 'transactions'} found
+      </p>
+
+      {/* ── Transaction List ── */}
       {transactions.length === 0 ? (
         <p className="transactions-list__empty">
           No transactions yet — add one above!
         </p>
+      ) : filteredTransactions.length === 0 ? (
+        <p className="transactions-list__empty">
+          No transactions match your filters.
+        </p>
       ) : (
         <ul className="transactions-list">
-          {transactions.map((t) => (
+          {filteredTransactions.map((t) => (
             <li key={t.id}>
               <TransactionCard
                 id={t.id}
