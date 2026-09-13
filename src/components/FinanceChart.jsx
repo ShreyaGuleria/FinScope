@@ -65,6 +65,38 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
     cutout: "65%",
   };
 
+  if (income === 0 && expenses === 0) {
+    return (
+      <div
+        style={{
+          maxWidth: "400px",
+          margin: "0 auto",
+          padding: "24px",
+          background: "rgba(17, 24, 39, 0.8)",
+          borderRadius: "16px",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
+          textAlign: "center",
+        }}
+      >
+        <h3
+          style={{
+            color: "#ffffff",
+            fontSize: "18px",
+            fontWeight: "600",
+            fontFamily: "'Inter', sans-serif",
+            marginBottom: "24px",
+          }}
+        >
+          Income vs Expenses
+        </h3>
+        <p style={{ color: "var(--color-text-muted)", margin: 0 }}>
+          Add transactions to see your chart 📊
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -77,6 +109,18 @@ const FinanceChart = ({ income = 5200, expenses = 3150 }) => {
         boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)",
       }}
     >
+      <h3
+        style={{
+          color: "#ffffff",
+          fontSize: "18px",
+          fontWeight: "600",
+          fontFamily: "'Inter', sans-serif",
+          marginBottom: "16px",
+          textAlign: "center",
+        }}
+      >
+        Income vs Expenses
+      </h3>
       <Doughnut data={data} options={options} />
       <div
         style={{
