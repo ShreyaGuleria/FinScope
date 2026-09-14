@@ -34,7 +34,7 @@
 
 .btn-export:hover:not(:disabled) {
   background: var(--color-surface-hover);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(100, 140, 255, 0.15);
 }
 
 .btn-export:disabled {

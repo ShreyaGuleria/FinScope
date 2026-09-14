@@ -92,7 +92,7 @@ export default function Transactions() {
           onClick={() => exportToCsv(transactions)}
           disabled={transactions.length === 0}
         >
-          📥 Export CSV
+          Export CSV
         </button>
       </div>
 
@@ -114,7 +114,7 @@ export default function Transactions() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="amount">Amount ($)</label>
+            <label htmlFor="amount">Amount (₹)</label>
             <input
               id="amount"
               type="number"
@@ -171,7 +171,7 @@ export default function Transactions() {
           <input
             type="text"
             className="filter-input"
-            placeholder="🔍 Search description..."
+            placeholder="Search description..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />

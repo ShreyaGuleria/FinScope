@@ -4,8 +4,8 @@ import './TransactionCard.css';
 export default function TransactionCard({ id, description, amount, type, category, date, onDelete }) {
   const isIncome = type === 'Income';
   const formattedAmount = isIncome
-    ? `+$${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
-    : `-$${Number(amount).toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+    ? `+₹${Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
+    : `-₹${Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
 
   return (
     <div className="transaction-card">

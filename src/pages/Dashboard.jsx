@@ -1,13 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SummaryCard from '../components/SummaryCard';
 import FinanceChart from '../components/FinanceChart';
 import TransactionCard from '../components/TransactionCard';
-import { loadTransactions } from '../utils/storage';
+import { loadTransactions, saveTransactions } from '../utils/storage';
 import './Dashboard.css';
 
 export default function Dashboard() {
-  const transactions = loadTransactions();
+  const [transactions, setTransactions] = useState(() => loadTransactions());
+
+  useEffect(() => {
+    saveTransactions(transactions);
+  }, [transactions]);
 
   const totalIncome = transactions
     .filter((t) => t.type === 'Income')
@@ -20,7 +24,11 @@ export default function Dashboard() {
   const netBalance = totalIncome - totalExpenses;
 
   const fmt = (val) =>
-    val.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    val.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
+
+  function handleDelete(id) {
+    setTransactions((prev) => prev.filter((t) => t.id !== id));
+  }
 
   // Recent 3 transactions
   const recentTransactions = transactions.slice(0, 3);
@@ -72,21 +80,21 @@ export default function Dashboard() {
           title="Total Income"
           amount={fmt(totalIncome)}
           color="var(--color-secondary)"
-          icon="💵"
+
           subtitle="All time total"
         />
         <SummaryCard
           title="Total Expenses"
           amount={fmt(totalExpenses)}
           color="var(--color-danger)"
-          icon="💸"
+
           subtitle="All time total"
         />
         <SummaryCard
           title="Net Balance"
           amount={fmt(netBalance)}
           color="var(--color-primary)"
-          icon="⚖️"
+
           subtitle="Net cash balance"
         />
       </div>
@@ -138,7 +146,7 @@ export default function Dashboard() {
                   type={t.type}
                   category={t.category}
                   date={t.date}
-                  onDelete={() => {}}
+                  onDelete={handleDelete}
                 />
               ))}
             </div>
