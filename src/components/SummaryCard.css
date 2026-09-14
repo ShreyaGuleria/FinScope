@@ -1,52 +1,81 @@
+/* =============================================================
+   SummaryCard.css — FinScope Editorial Financial Metrics
+   ============================================================= */
+
 .summary-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-surface-border);
-  border-left: 4px solid var(--accent-color, var(--color-primary));
-  padding: 1.5rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  transition: all var(--transition-fast);
+  background: #111111;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  transition:
+    transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    background 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  cursor: default;
 }
 
 .summary-card:hover {
-  transform: translateY(-3px);
-  border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.16);
+  background: #161616;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
 }
 
 .summary-card__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.75rem;
+}
+
+.summary-card__title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.summary-card__accent-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: inline-block;
+  box-shadow: 0 0 8px currentColor;
 }
 
 .summary-card__title {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-muted);
+  font-family: var(--font-base);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--color-text-dim);
 }
 
-.summary-card__icon {
-  font-size: 1.5rem;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.5rem;
-  border-radius: var(--radius-md);
+.summary-card__rule {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  margin: 1rem 0 1.25rem;
 }
 
 .summary-card__amount {
-  font-size: 2rem;
-  font-weight: 800;
+  font-family: var(--font-display);
+  font-size: clamp(1.875rem, 3.5vw, 2.5rem);
+  font-weight: 500;
   letter-spacing: -0.02em;
-  margin-bottom: 0.25rem;
+  color: #ffffff;
+  line-height: 1.1;
+  margin-bottom: 0.625rem;
 }
 
 .summary-card__subtitle {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-dim);
-  font-weight: 500;
+  font-family: var(--font-base);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
+

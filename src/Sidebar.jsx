@@ -23,7 +23,7 @@ function Sidebar() {
     <aside className={`sidebar ${isOpen ? 'sidebar--open' : 'sidebar--closed'}`}>
       <div className="sidebar-header">
         <div className="sidebar-brand">
-          <span>⚡</span>
+          <span className="sidebar-brand__mark">F</span>
           <span className="sidebar-brand-text">FinScope</span>
         </div>
         <button
