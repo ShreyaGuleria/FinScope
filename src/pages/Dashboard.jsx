@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SummaryCard from '../components/SummaryCard';
 import FinanceChart from '../components/FinanceChart';
@@ -25,49 +24,20 @@ export default function Dashboard() {
   // Recent 3 transactions
   const recentTransactions = transactions.slice(0, 3);
 
-  // Scroll reveal observer
-  useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const targets = document.querySelectorAll('.reveal');
-    if (!targets.length) return;
-
-    if (prefersReduced) {
-      targets.forEach((el) => el.classList.add('visible'));
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    targets.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <div className="dashboard-page">
-      {/* Header Section */}
-      <div className="dashboard-header reveal">
-        <div className="dashboard-header__info">
-          <div className="dashboard-eyebrow">Financial Overview</div>
+      <div className="dashboard-header">
+        <div>
           <h1 className="dashboard-title">Dashboard Overview</h1>
           <p className="dashboard-subtitle">Monitor your real-time balance and expense metrics.</p>
         </div>
-        <Link to="/transactions" className="btn-add-quick" id="dashboard-cta-add">
-          Add Transaction
+        <Link to="/transactions" className="btn-add-quick">
+          + Add Transaction
         </Link>
       </div>
 
       {/* Summary Cards Row */}
-      <div className="dashboard-cards reveal" style={{ transitionDelay: '80ms' }}>
+      <div className="dashboard-cards">
         <SummaryCard
           title="Total Income"
           amount={fmt(totalIncome)}
@@ -93,15 +63,11 @@ export default function Dashboard() {
 
       {/* Analytics Section */}
       <div className="dashboard-grid">
-        {/* Income vs Expenses Card */}
-        <div className="dashboard-card-section reveal" style={{ transitionDelay: '140ms' }}>
-          <div className="section-header-block">
-            <span className="section-eyebrow">Analytics</span>
-            <h2 className="section-title">Income vs Expenses</h2>
-          </div>
+        <div className="dashboard-card-section">
+          <h2 className="section-title">Income vs Expenses</h2>
           {transactions.length === 0 ? (
             <div className="empty-dashboard-chart">
-              <p className="empty-chart-text">No transactions to display.</p>
+              <p>No transactions to display.</p>
               <Link to="/transactions" className="btn-text-link">
                 Add your first income or expense →
               </Link>
@@ -111,22 +77,16 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Recent Activity Card */}
-        <div className="dashboard-card-section reveal" style={{ transitionDelay: '200ms' }}>
+        <div className="dashboard-card-section">
           <div className="section-header-inline">
-            <div className="section-header-block">
-              <span className="section-eyebrow">History</span>
-              <h2 className="section-title">Recent Activity</h2>
-            </div>
-            <Link to="/transactions" className="btn-view-all">
-              View All →
+            <h2 className="section-title">Recent Activity</h2>
+            <Link to="/transactions" className="btn-text-link">
+              View All
             </Link>
           </div>
 
           {recentTransactions.length === 0 ? (
-            <div className="empty-recent-container">
-              <p className="empty-recent-text">No recent transactions recorded.</p>
-            </div>
+            <p className="empty-recent-text">No recent transactions recorded.</p>
           ) : (
             <div className="recent-list">
               {recentTransactions.map((t) => (
@@ -138,7 +98,7 @@ export default function Dashboard() {
                   type={t.type}
                   category={t.category}
                   date={t.date}
-                  onDelete={() => {}}
+                  onDelete={() => { }}
                 />
               ))}
             </div>
@@ -148,4 +108,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
