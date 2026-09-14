@@ -3,11 +3,11 @@
    ============================================================= */
 
 .summary-card {
-  background: #111111;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: #0a1428;
+  border: 1px solid rgba(100, 140, 255, 0.08);
   border-radius: 14px;
   padding: 2rem 1.75rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 4, 30, 0.35);
   transition:
     transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
     border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -20,9 +20,9 @@
 
 .summary-card:hover {
   transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.16);
-  background: #161616;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+  border-color: rgba(100, 140, 255, 0.16);
+  background: #0e1a36;
+  box-shadow: 0 12px 36px rgba(0, 4, 30, 0.5);
 }
 
 .summary-card__header {
@@ -57,7 +57,7 @@
 
 .summary-card__rule {
   border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  border-top: 1px solid rgba(100, 140, 255, 0.08);
   margin: 1rem 0 1.25rem;
 }
 

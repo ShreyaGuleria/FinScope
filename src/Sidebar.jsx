@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const navItems = [
-  { to: '/dashboard', label: 'Dashboard', icon: '📊' },
-  { to: '/transactions', label: 'Transactions', icon: '💳' },
-  { to: '/summary', label: 'Summary', icon: '📈' },
-  { to: '/', label: 'Landing Page', icon: '🏠' },
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/transactions', label: 'Transactions' },
+  { to: '/summary', label: 'Summary' },
+  { to: '/', label: 'Landing Page' },
 ];
 
 function Sidebar() {
@@ -39,10 +39,9 @@ function Sidebar() {
 
       <nav>
         <ul>
-          {navItems.map(({ to, label, icon }) => (
+          {navItems.map(({ to, label }) => (
             <li key={to}>
               <NavLink to={to} className="nav-link">
-                <span className="nav-icon">{icon}</span>
                 <span className="nav-label">{label}</span>
               </NavLink>
             </li>

@@ -31,7 +31,7 @@ export default function Summary() {
   const categoryData = Object.entries(categoryMap).sort((a, b) => b[1] - a[1]);
 
   const fmt = (val) =>
-    val.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+    val.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
 
   return (
     <div className="summary-page">
@@ -48,7 +48,7 @@ export default function Summary() {
         <>
           {/* Monthly Breakdown Table */}
           <div className="summary-card-table">
-            <h2 className="summary-section-title">📅 Monthly Breakdown</h2>
+            <h2 className="summary-section-title">Monthly Breakdown</h2>
             <div className="table-responsive">
               <table className="summary-table">
                 <thead>
@@ -80,7 +80,7 @@ export default function Summary() {
 
           {/* Category Breakdown */}
           <div className="summary-card-categories">
-            <h2 className="summary-section-title">🏷️ Category Volume</h2>
+            <h2 className="summary-section-title">Category Volume</h2>
             <div className="category-grid">
               {categoryData.map(([cat, total]) => (
                 <div key={cat} className="category-card">
