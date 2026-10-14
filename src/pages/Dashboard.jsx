@@ -4,10 +4,11 @@ import SummaryCard from '../components/SummaryCard';
 import FinanceChart from '../components/FinanceChart';
 import TransactionCard from '../components/TransactionCard';
 import { useFinance } from '../context/FinanceContext';
+import { formatCurrency } from '../utils/currencyApi';
 import './Dashboard.css';
 
 export default function Dashboard() {
-  const { transactions, deleteTransaction, currency, isLoading, error } = useFinance();
+  const { transactions, deleteTransaction, currency, exchangeRates, isLoading, error } = useFinance();
 
   const { totalIncome, totalExpenses, netBalance } = useMemo(() => {
     let income = 0;
@@ -19,11 +20,7 @@ export default function Dashboard() {
     return { totalIncome: income, totalExpenses: expenses, netBalance: income - expenses };
   }, [transactions]);
 
-  const fmt = (val) =>
-    val.toLocaleString('en-IN', {
-      style: 'currency',
-      currency: currency || 'INR',
-    });
+  const fmt = (val) => formatCurrency(val, currency, exchangeRates);
 
   // Recent 3 transactions
   const recentTransactions = transactions.slice(0, 3);

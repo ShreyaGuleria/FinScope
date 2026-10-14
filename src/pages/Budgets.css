@@ -1,31 +1,384 @@
-/* Placeholder pages — Budgets & Simulator */
+/* ===================================================
+   Budgets Page — Savleen Dewan (Leg 3, Eval-II)
+   =================================================== */
 
-.placeholder-page {
+/* ── Page shell ── */
+.budgets-page {
   display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  padding: var(--spacing-xl) 0;
+  flex-direction: column;
+  gap: var(--spacing-xl);
   animation: fadeIn 0.3s ease-out forwards;
 }
 
-.placeholder-page__inner {
-  background: var(--color-surface);
-  border: 1px solid var(--color-surface-border);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-2xl) var(--spacing-xl);
-  max-width: 480px;
+/* ── Page header ── */
+.budgets-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
 }
 
-.placeholder-page__title {
+.budgets-title {
   font-family: var(--font-display);
   font-size: var(--font-size-3xl);
   font-weight: 700;
   color: var(--color-text);
-  margin-bottom: var(--spacing-md);
+  letter-spacing: -0.02em;
+  margin-bottom: var(--spacing-xs);
 }
 
-.placeholder-page__desc {
-  font-size: var(--font-size-md);
+.budgets-subtitle {
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
+}
+
+/* ── Overall summary card ── */
+.budgets-summary-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg) var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  box-shadow: var(--shadow-md);
+}
+
+.budgets-summary-card__totals {
+  display: flex;
+  gap: var(--spacing-xl);
+  flex-wrap: wrap;
+}
+
+.budgets-summary-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.budgets-summary-stat__label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+
+.budgets-summary-stat__value {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  font-family: var(--font-mono);
+}
+
+.budgets-summary-stat__value--budget { color: var(--color-primary-light); }
+.budgets-summary-stat__value--spent  { color: var(--color-warning); }
+.budgets-summary-stat__value--remaining { color: var(--color-secondary-light); }
+.budgets-summary-stat__value--over  { color: var(--color-danger-light); }
+
+/* ── Empty state ── */
+.budgets-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  gap: var(--spacing-md);
+}
+
+.budgets-empty-state__icon {
+  font-size: 3rem;
+  line-height: 1;
+  filter: grayscale(0.2);
+}
+
+.budgets-empty-state__heading {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.budgets-empty-state__text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  max-width: 380px;
   line-height: 1.6;
+}
+
+/* ── Budget category grid ── */
+.budgets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+/* ── Individual budget card ── */
+.budget-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base),
+    transform var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.budget-card:hover {
+  border-color: rgba(100, 140, 255, 0.2);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.budget-card--over {
+  border-color: rgba(244, 63, 94, 0.3);
+  background: linear-gradient(135deg, var(--color-surface), rgba(244, 63, 94, 0.04));
+}
+
+.budget-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+}
+
+.budget-card__category {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-text);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.budget-card__edit-btn {
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary-light);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.budget-card__edit-btn:hover {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: var(--color-primary);
+}
+
+.budget-card__amounts {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.budget-card__spent {
+  color: var(--color-warning);
+}
+
+.budget-card__divider {
+  color: var(--color-text-dim);
+  font-weight: 400;
+}
+
+.budget-card__limit {
+  color: var(--color-text-muted);
+}
+
+.budget-card__remaining {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.budget-card__remaining--ok {
+  color: var(--color-secondary-light);
+}
+
+.budget-card__remaining--over {
+  color: var(--color-danger-light);
+}
+
+.budget-card__no-limit {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-dim);
+  font-style: italic;
+}
+
+/* ── Modal footer buttons ── */
+.budget-modal-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.btn-budget-remove {
+  background: rgba(244, 63, 94, 0.08);
+  border: 1px solid rgba(244, 63, 94, 0.25);
+  border-radius: var(--radius-sm);
+  color: var(--color-danger-light);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-right: auto;
+}
+
+.btn-budget-remove:hover {
+  background: rgba(244, 63, 94, 0.16);
+  border-color: var(--color-danger);
+}
+
+.btn-budget-cancel {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-budget-cancel:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}
+
+.btn-budget-save {
+  background: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  padding: 0.55rem 1.3rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--glow-primary);
+}
+
+.btn-budget-save:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  transform: translateY(-1px);
+}
+
+.btn-budget-save:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── Budget form (inside modal) ── */
+.budget-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.budget-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.budget-form__label {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.budget-form__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.budget-form__symbol {
+  position: absolute;
+  left: 0.75rem;
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  user-select: none;
+}
+
+.budget-form__input {
+  width: 100%;
+  padding: 0.65rem 0.75rem 0.65rem 2rem;
+  background: var(--color-surface-hover);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: var(--font-size-md);
+  font-family: var(--font-mono);
+  transition: border-color var(--transition-fast);
+}
+
+.budget-form__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.budget-form__input--invalid {
+  border-color: var(--color-danger);
+}
+
+.budget-form__input--invalid:focus {
+  box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.15);
+}
+
+.budget-form__error {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-danger-light);
+}
+
+.budget-form__hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-dim);
+  font-style: italic;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .budgets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .budgets-summary-card__totals {
+    gap: var(--spacing-md);
+  }
+
+  .budgets-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .budget-modal-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .btn-budget-remove {
+    margin-right: 0;
+  }
+
+  .btn-budget-save,
+  .btn-budget-cancel,
+  .btn-budget-remove {
+    width: 100%;
+    text-align: center;
+  }
 }

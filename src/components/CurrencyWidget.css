@@ -1,0 +1,143 @@
+/* ─────────────────────────────────────────────
+   CurrencyWidget — compact sidebar block
+───────────────────────────────────────────── */
+
+.currency-widget {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md);
+  background: rgba(59, 130, 246, 0.04);
+  border: 1px solid rgba(100, 140, 255, 0.1);
+  border-radius: var(--radius-md);
+}
+
+.currency-widget__label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+
+.currency-widget__select {
+  width: 100%;
+  padding: 0.45rem var(--spacing-sm);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-base);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+  appearance: none;
+  /* simple chevron via background-image */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238899b8' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  padding-right: 2rem;
+}
+
+.currency-widget__select:hover,
+.currency-widget__select:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  background-color: var(--color-surface-hover);
+}
+
+/* ── Status row ── */
+.currency-widget__status {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+/* ── Source badge ── */
+.currency-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.03em;
+}
+
+.currency-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Live — green */
+.currency-badge--live {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-secondary-light);
+}
+.currency-badge--live .currency-badge__dot {
+  background: var(--color-secondary);
+}
+
+/* Cached — amber */
+.currency-badge--cached {
+  background: rgba(245, 158, 11, 0.12);
+  color: #fbbf24;
+}
+.currency-badge--cached .currency-badge__dot {
+  background: var(--color-warning);
+}
+
+/* Offline — muted red */
+.currency-badge--offline {
+  background: rgba(244, 63, 94, 0.1);
+  color: var(--color-danger-light);
+}
+.currency-badge--offline .currency-badge__dot {
+  background: var(--color-danger);
+}
+
+/* Loading — pulse */
+.currency-badge--loading {
+  background: rgba(100, 140, 255, 0.08);
+  color: var(--color-text-muted);
+}
+.currency-badge__dot--pulse {
+  background: var(--color-primary-light);
+  animation: badgePulse 1.2s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ── Retry button ── */
+.currency-widget__retry {
+  margin-left: auto;
+  background: transparent;
+  border: 1px solid rgba(100, 140, 255, 0.2);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary-light);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.currency-widget__retry:hover {
+  background: rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary);
+}
+
+/* ── Mobile: hide label when sidebar is collapsed ── */
+@media (max-width: 768px) {
+  .sidebar--closed .currency-widget {
+    display: none;
+  }
+}

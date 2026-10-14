@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
+import CurrencyWidget from './components/CurrencyWidget';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard' },
@@ -55,6 +56,9 @@ function Sidebar() {
           ))}
         </ul>
       </nav>
+
+      {/* Currency selector — hidden when sidebar is collapsed on mobile */}
+      <CurrencyWidget />
     </aside>
   );
 }

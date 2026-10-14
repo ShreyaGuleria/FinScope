@@ -115,6 +115,20 @@ export function FinanceProvider({ children }) {
   }, [state.budgets]);
 
   /* ── Actions ── */
+  const dismissToast = useCallback((id) => {
+    dispatch({ type: 'DISMISS_TOAST', payload: id });
+  }, []);
+
+  const showToast = useCallback(
+    (message, type = 'info') => {
+      const id = Date.now();
+      dispatch({ type: 'SHOW_TOAST', payload: { id, message, type } });
+      // Auto-dismiss after 3 s
+      setTimeout(() => dispatch({ type: 'DISMISS_TOAST', payload: id }), 3000);
+    },
+    [],
+  );
+
   const addTransaction = useCallback((tx) => {
     if (!tx || !tx.description || !tx.amount || !tx.date) return;
     const newTx = {
@@ -126,7 +140,30 @@ export function FinanceProvider({ children }) {
       date: tx.date,
     };
     dispatch({ type: 'ADD_TRANSACTION', payload: newTx });
-  }, []);
+
+    /* ── Over-budget detection (expenses only, fires only on first crossing) ── */
+    if (newTx.type === 'Expense') {
+      const budget = state.budgets[newTx.category];
+      if (budget != null && budget > 0) {
+        const monthPrefix = newTx.date.slice(0, 7); // 'YYYY-MM'
+        let spentBefore = 0;
+        for (const t of state.transactions) {
+          if (
+            t.type === 'Expense' &&
+            t.category === newTx.category &&
+            t.date.slice(0, 7) === monthPrefix
+          ) {
+            spentBefore += Number(t.amount);
+          }
+        }
+        const spentAfter = spentBefore + newTx.amount;
+        /* Toast only when crossing from under to over — not every subsequent expense */
+        if (spentBefore < budget && spentAfter >= budget) {
+          showToast(`${newTx.category} budget exceeded!`, 'error');
+        }
+      }
+    }
+  }, [state.budgets, state.transactions, showToast]);
 
   const deleteTransaction = useCallback((id) => {
     dispatch({ type: 'DELETE_TRANSACTION', payload: id });
@@ -147,20 +184,6 @@ export function FinanceProvider({ children }) {
   const removeBudget = useCallback((category) => {
     dispatch({ type: 'REMOVE_BUDGET', payload: category });
   }, []);
-
-  const dismissToast = useCallback((id) => {
-    dispatch({ type: 'DISMISS_TOAST', payload: id });
-  }, []);
-
-  const showToast = useCallback(
-    (message, type = 'info') => {
-      const id = Date.now();
-      dispatch({ type: 'SHOW_TOAST', payload: { id, message, type } });
-      // Auto-dismiss after 3 s
-      setTimeout(() => dispatch({ type: 'DISMISS_TOAST', payload: id }), 3000);
-    },
-    [],
-  );
 
   /* ── Memoised context value (prevents needless re-renders in consumers) ── */
   const value = useMemo(
