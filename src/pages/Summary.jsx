@@ -1,8 +1,8 @@
-import { loadTransactions } from '../utils/storage';
+import { useFinance } from '../context/FinanceContext';
 import './Summary.css';
 
 export default function Summary() {
-  const transactions = loadTransactions();
+  const { transactions } = useFinance();
 
   // Group by Month (YYYY-MM)
   const monthlyMap = transactions.reduce((acc, t) => {
@@ -36,7 +36,7 @@ export default function Summary() {
   return (
     <div className="summary-page">
       <div className="summary-header">
-        <h1 className="summary-title">Monthly & Category Summary</h1>
+        <h1 className="summary-title">Monthly &amp; Category Summary</h1>
         <p className="summary-subtitle">Overview of monthly cash flow and category allocation.</p>
       </div>
 

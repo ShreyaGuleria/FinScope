@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import TransactionCard from '../components/TransactionCard';
-import { loadTransactions, saveTransactions } from '../utils/storage';
+import { useFinance } from '../context/FinanceContext';
 import { exportToCsv } from '../utils/exportCsv';
 import './Transactions.css';
 
@@ -18,7 +18,9 @@ const CATEGORIES = [
 const getTodayDate = () => new Date().toISOString().split('T')[0];
 
 export default function Transactions() {
-  const [transactions, setTransactions] = useState(() => loadTransactions());
+  const { transactions, addTransaction, deleteTransaction, showToast, isLoading, error } =
+    useFinance();
+
   const [form, setForm] = useState({
     description: '',
     amount: '',
@@ -33,10 +35,6 @@ export default function Transactions() {
   const [categoryFilter, setCategoryFilter] = useState('All');
   const [sortOrder, setSortOrder] = useState('newest');
 
-  useEffect(() => {
-    saveTransactions(transactions);
-  }, [transactions]);
-
   function handleChange(e) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
@@ -45,16 +43,14 @@ export default function Transactions() {
     e.preventDefault();
     if (!form.description.trim() || !form.amount || !form.date) return;
 
-    const newTransaction = {
-      id: Date.now(),
+    addTransaction({
       description: form.description.trim(),
       amount: parseFloat(form.amount),
       type: form.type,
       category: form.category,
       date: form.date,
-    };
+    });
 
-    setTransactions((prev) => [newTransaction, ...prev]);
     setForm({
       description: '',
       amount: '',
@@ -62,10 +58,13 @@ export default function Transactions() {
       category: 'Food & Dining',
       date: getTodayDate(),
     });
+
+    showToast('Transaction saved!', 'success');
   }
 
   function handleDelete(id) {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
+    deleteTransaction(id);
+    showToast('Transaction deleted.', 'info');
   }
 
   const filteredTransactions = transactions
@@ -79,6 +78,22 @@ export default function Transactions() {
         ? new Date(b.date) - new Date(a.date)
         : new Date(a.date) - new Date(b.date)
     );
+
+  if (isLoading) {
+    return (
+      <div className="transactions-page">
+        <p style={{ color: 'var(--color-text-muted)', padding: '2rem' }}>Loading…</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="transactions-page">
+        <p style={{ color: 'var(--color-danger)', padding: '2rem' }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="transactions-page">

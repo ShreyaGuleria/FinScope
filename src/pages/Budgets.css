@@ -1,0 +1,31 @@
+/* Placeholder pages — Budgets & Simulator */
+
+.placeholder-page {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: var(--spacing-xl) 0;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.placeholder-page__inner {
+  background: var(--color-surface);
+  border: 1px solid var(--color-surface-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl) var(--spacing-xl);
+  max-width: 480px;
+}
+
+.placeholder-page__title {
+  font-family: var(--font-display);
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--spacing-md);
+}
+
+.placeholder-page__desc {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
