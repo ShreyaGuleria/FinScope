@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const navItems = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/transactions', label: 'Transactions' },
   { to: '/summary', label: 'Summary' },
+  { to: '/budgets', label: 'Budgets' },
+  { to: '/simulator', label: 'Simulator' },
   { to: '/', label: 'Landing Page' },
 ];
 
@@ -17,6 +19,11 @@ function Sidebar() {
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Close sidebar on mobile after a nav link is clicked
+  const handleNavClick = useCallback(() => {
+    if (window.innerWidth <= 768) setIsOpen(false);
   }, []);
 
   return (
@@ -41,7 +48,7 @@ function Sidebar() {
         <ul>
           {navItems.map(({ to, label }) => (
             <li key={to}>
-              <NavLink to={to} className="nav-link">
+              <NavLink to={to} className="nav-link" onClick={handleNavClick}>
                 <span className="nav-label">{label}</span>
               </NavLink>
             </li>

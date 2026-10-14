@@ -1,7 +1,7 @@
 import React from 'react';
 import './SummaryCard.css';
 
-export default function SummaryCard({ title, amount, color, icon, subtitle }) {
+export default function SummaryCard({ title, amount, color, subtitle }) {
   return (
     <article className="summary-card" style={{ '--accent-color': color }}>
       <div className="summary-card__header">

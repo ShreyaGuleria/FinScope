@@ -1,40 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import SummaryCard from '../components/SummaryCard';
 import FinanceChart from '../components/FinanceChart';
 import TransactionCard from '../components/TransactionCard';
-import { loadTransactions, saveTransactions } from '../utils/storage';
+import { useFinance } from '../context/FinanceContext';
 import './Dashboard.css';
 
 export default function Dashboard() {
-  const [transactions, setTransactions] = useState(() => loadTransactions());
+  const { transactions, deleteTransaction, currency, isLoading, error } = useFinance();
 
-  useEffect(() => {
-    saveTransactions(transactions);
+  const { totalIncome, totalExpenses, netBalance } = useMemo(() => {
+    let income = 0;
+    let expenses = 0;
+    for (const t of transactions) {
+      if (t.type === 'Income') income += Number(t.amount);
+      else expenses += Number(t.amount);
+    }
+    return { totalIncome: income, totalExpenses: expenses, netBalance: income - expenses };
   }, [transactions]);
-
-  const totalIncome = transactions
-    .filter((t) => t.type === 'Income')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
-
-  const totalExpenses = transactions
-    .filter((t) => t.type === 'Expense')
-    .reduce((sum, t) => sum + Number(t.amount), 0);
-
-  const netBalance = totalIncome - totalExpenses;
 
   const fmt = (val) =>
     val.toLocaleString('en-IN', {
       style: 'currency',
-      currency: 'INR',
+      currency: currency || 'INR',
     });
-
-  function handleDelete(id) {
-    setTransactions((prev) => prev.filter((t) => t.id !== id));
-  }
 
   // Recent 3 transactions
   const recentTransactions = transactions.slice(0, 3);
+
+  if (isLoading) {
+    return (
+      <div className="dashboard-page">
+        <p style={{ color: 'var(--color-text-muted)', padding: '2rem' }}>Loading…</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="dashboard-page">
+        <p style={{ color: 'var(--color-danger)', padding: '2rem' }}>{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-page">
@@ -120,7 +128,7 @@ export default function Dashboard() {
                   type={t.type}
                   category={t.category}
                   date={t.date}
-                  onDelete={handleDelete}
+                  onDelete={deleteTransaction}
                 />
               ))}
             </div>
