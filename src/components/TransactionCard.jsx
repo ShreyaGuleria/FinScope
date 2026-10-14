@@ -1,14 +1,46 @@
-import React from 'react';
 import './TransactionCard.css';
+import { formatCurrency } from '../utils/currencyApi';
 
-export default function TransactionCard({ id, description, amount, type, category, date, onDelete }) {
+export default function TransactionCard({
+  id,
+  description,
+  amount,
+  type,
+  category,
+  date,
+  onDelete,
+  // Optional checkbox props — omitted on Dashboard so no visible change there
+  selectable = false,
+  selected = false,
+  onSelectChange,
+  currency,
+  exchangeRates,
+}) {
   const isIncome = type === 'Income';
-  const formattedAmount = isIncome
-    ? `+₹${Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
-    : `-₹${Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+
+  // Use formatCurrency when currency context is passed; fall back to the
+  // original INR-only formatting for the Dashboard (which passes no currency).
+  const formattedAmount =
+    currency && exchangeRates !== undefined
+      ? `${isIncome ? '+' : '-'}${formatCurrency(amount, currency, exchangeRates)}`
+      : isIncome
+        ? `+₹${Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`
+        : `-₹${Number(amount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
 
   return (
-    <div className="transaction-card">
+    <div className={`transaction-card${selected ? ' transaction-card--selected' : ''}`}>
+      {selectable && (
+        <label className="transaction-card__checkbox-wrap">
+          <input
+            type="checkbox"
+            className="transaction-card__checkbox"
+            checked={selected}
+            onChange={(e) => onSelectChange && onSelectChange(id, e.target.checked)}
+            aria-label={`Select transaction: ${description}`}
+          />
+        </label>
+      )}
+
       <div className="transaction-card__main">
         <div className="transaction-card__info">
           <div className="transaction-card__desc">{description}</div>
@@ -38,4 +70,3 @@ export default function TransactionCard({ id, description, amount, type, categor
     </div>
   );
 }
-

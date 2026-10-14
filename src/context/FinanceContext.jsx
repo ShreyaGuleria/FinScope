@@ -59,6 +59,12 @@ function financeReducer(state, action) {
       const updated = state.transactions.filter((t) => t.id !== action.payload);
       return { ...state, transactions: updated };
     }
+    case 'DELETE_TRANSACTIONS': {
+      // Batch delete — single state update so localStorage is written once.
+      const idSet = new Set(action.payload);
+      const updated = state.transactions.filter((t) => !idSet.has(t.id));
+      return { ...state, transactions: updated };
+    }
     case 'SET_CURRENCY':
       return { ...state, currency: action.payload };
     case 'SET_EXCHANGE_RATES':
@@ -169,6 +175,10 @@ export function FinanceProvider({ children }) {
     dispatch({ type: 'DELETE_TRANSACTION', payload: id });
   }, []);
 
+  const deleteTransactions = useCallback((ids) => {
+    dispatch({ type: 'DELETE_TRANSACTIONS', payload: ids });
+  }, []);
+
   const setCurrency = useCallback((code) => {
     dispatch({ type: 'SET_CURRENCY', payload: code });
   }, []);
@@ -191,6 +201,7 @@ export function FinanceProvider({ children }) {
       transactions: state.transactions,
       addTransaction,
       deleteTransaction,
+      deleteTransactions,
       currency: state.currency,
       setCurrency,
       exchangeRates: state.exchangeRates,
@@ -214,6 +225,7 @@ export function FinanceProvider({ children }) {
       state.error,
       addTransaction,
       deleteTransaction,
+      deleteTransactions,
       setCurrency,
       setExchangeRates,
       setBudget,
