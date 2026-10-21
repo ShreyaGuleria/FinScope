@@ -69,13 +69,13 @@ function pickSupportedRates(allRates) {
  *   'cached'   — served from localStorage (fresh cache or any-age fallback)
  *   'fallback' — hardcoded approximate rates (no network, no cache)
  */
-export async function getExchangeRates() {
+export async function getExchangeRates(force = false) {
   /* ── 1. Return fresh cache if under 1 hour old ── */
   const cached = readCache();
-  if (cached) {
+  if (!force && cached) {
     const age = Date.now() - new Date(cached.updatedAt).getTime();
     if (age < CACHE_TTL_MS) {
-      return { rates: cached.rates, source: 'cached', updatedAt: cached.updatedAt };
+      return { rates: cached.rates, source: 'cached', updatedAt: cached.updatedAt, failed: false };
     }
   }
 
@@ -101,13 +101,13 @@ export async function getExchangeRates() {
     const updatedAt = new Date().toISOString();
     writeCache(rates, updatedAt);
 
-    return { rates, source: 'live', updatedAt };
+    return { rates, source: 'live', updatedAt, failed: false };
   } catch {
     clearTimeout(timerId);
 
     /* ── 3. Stale cache (any age) as fallback ── */
     if (cached) {
-      return { rates: cached.rates, source: 'cached', updatedAt: cached.updatedAt };
+      return { rates: cached.rates, source: 'cached', updatedAt: cached.updatedAt, failed: true };
     }
 
     /* ── 4. Hardcoded fallback ── */
@@ -115,6 +115,7 @@ export async function getExchangeRates() {
       rates: { ...FALLBACK_RATES },
       source: 'fallback',
       updatedAt: null,
+      failed: true,
     };
   }
 }

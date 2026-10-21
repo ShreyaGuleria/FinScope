@@ -84,6 +84,30 @@
   font-weight: 700;
 }
 
+.category-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.category-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.category-section__heading {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.category-empty-text {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
 .category-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

@@ -12,12 +12,13 @@ import {
   loadTransactions,
   saveTransactions,
 } from '../utils/storage';
+import { buildDemoTransactions, DEMO_BUDGETS } from '../utils/demoData';
 
 /* ─────────────────────────────────────────────
    Storage keys
 ───────────────────────────────────────────── */
 const KEY_CURRENCY = 'finscope_currency';
-const KEY_BUDGETS = 'finscope_budgets';
+const KEY_BUDGETS  = 'finscope_budgets';
 
 /* ─────────────────────────────────────────────
    Initial state hydrated from localStorage
@@ -26,22 +27,22 @@ function buildInitialState() {
   try {
     return {
       transactions: loadTransactions(),
-      currency: loadFromStorage(KEY_CURRENCY, 'INR'),
+      currency:     loadFromStorage(KEY_CURRENCY, 'INR'),
       exchangeRates: null,
-      budgets: loadFromStorage(KEY_BUDGETS, {}),
-      toasts: [],
-      isLoading: false,
-      error: null,
+      budgets:      loadFromStorage(KEY_BUDGETS, {}),
+      toasts:       [],
+      isLoading:    false,
+      error:        null,
     };
   } catch (err) {
     return {
       transactions: [],
-      currency: 'INR',
+      currency:     'INR',
       exchangeRates: null,
-      budgets: {},
-      toasts: [],
-      isLoading: false,
-      error: `Failed to load saved data: ${err.message}`,
+      budgets:      {},
+      toasts:       [],
+      isLoading:    false,
+      error:        `Failed to load saved data: ${err.message}`,
     };
   }
 }
@@ -59,6 +60,35 @@ function financeReducer(state, action) {
       const updated = state.transactions.filter((t) => t.id !== action.payload);
       return { ...state, transactions: updated };
     }
+    case 'UPDATE_TRANSACTION': {
+      const updated = state.transactions.map((t) =>
+        t.id === action.payload.id ? action.payload : t
+      );
+      return { ...state, transactions: updated };
+    }
+
+    /* ── Restore a previously-deleted transaction at its original index.
+       Used by the undo-delete flow in Transactions.jsx ── */
+    case 'RESTORE_TRANSACTION': {
+      const { tx, index } = action.payload;
+      const updated = [...state.transactions];
+      // Clamp index in case other deletions happened in the same 5-second window
+      updated.splice(Math.min(index, updated.length), 0, tx);
+      return { ...state, transactions: updated };
+    }
+
+    /* ── Demo data: prepend demo transactions; merge budgets (existing user
+       budgets win so we don't overwrite anything the user already set) ── */
+    case 'SEED_DEMO_DATA': {
+      const transactions = [...action.payload.transactions, ...state.transactions];
+      const budgets = { ...action.payload.budgets, ...state.budgets };
+      return { ...state, transactions, budgets };
+    }
+
+    /* ── Clear all: wipe transactions and budgets, keep currency preference ── */
+    case 'CLEAR_ALL_DATA':
+      return { ...state, transactions: [], budgets: {} };
+
     case 'SET_CURRENCY':
       return { ...state, currency: action.payload };
     case 'SET_EXCHANGE_RATES':
@@ -169,6 +199,24 @@ export function FinanceProvider({ children }) {
     dispatch({ type: 'DELETE_TRANSACTION', payload: id });
   }, []);
 
+  const updateTransaction = useCallback((tx) => {
+    if (!tx || !tx.id) return;
+    const formatted = {
+      ...tx,
+      amount: parseFloat(tx.amount),
+      description: String(tx.description).trim(),
+    };
+    dispatch({ type: 'UPDATE_TRANSACTION', payload: formatted });
+  }, []);
+
+  /**
+   * restoreTransaction — re-inserts a previously deleted transaction at its
+   * original position in the array. Called by the 5-second undo bar.
+   */
+  const restoreTransaction = useCallback((tx, index) => {
+    dispatch({ type: 'RESTORE_TRANSACTION', payload: { tx, index } });
+  }, []);
+
   const setCurrency = useCallback((code) => {
     dispatch({ type: 'SET_CURRENCY', payload: code });
   }, []);
@@ -185,12 +233,30 @@ export function FinanceProvider({ children }) {
     dispatch({ type: 'REMOVE_BUDGET', payload: category });
   }, []);
 
+  const seedDemoData = useCallback(() => {
+    dispatch({
+      type: 'SEED_DEMO_DATA',
+      payload: {
+        transactions: buildDemoTransactions(),
+        budgets: DEMO_BUDGETS,
+      },
+    });
+  }, []);
+
+  const clearAllData = useCallback(() => {
+    dispatch({ type: 'CLEAR_ALL_DATA' });
+  }, []);
+
   /* ── Memoised context value (prevents needless re-renders in consumers) ── */
   const value = useMemo(
     () => ({
       transactions: state.transactions,
       addTransaction,
+      updateTransaction,
       deleteTransaction,
+      restoreTransaction,
+      seedDemoData,
+      clearAllData,
       currency: state.currency,
       setCurrency,
       exchangeRates: state.exchangeRates,
@@ -213,7 +279,11 @@ export function FinanceProvider({ children }) {
       state.isLoading,
       state.error,
       addTransaction,
+      updateTransaction,
       deleteTransaction,
+      restoreTransaction,
+      seedDemoData,
+      clearAllData,
       setCurrency,
       setExchangeRates,
       setBudget,

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useFinance } from '../context/FinanceContext';
 import Modal from '../components/Modal';
-import ProgressBar from '../components/ProgressBar';
+import ProgressBar, { getProgressStatus } from '../components/ProgressBar';
 import { formatCurrency, toINR } from '../utils/currencyApi';
 import { EXPENSE_CATEGORIES } from '../utils/categories';
 import './Budgets.css';
@@ -206,12 +206,22 @@ export default function Budgets() {
           const limitINR = budgets[cat] ?? 0;
           const hasLimit = limitINR > 0;
           const remainingINR = limitINR - spentINR;
-          const isOver = hasLimit && spentINR >= limitINR;
+          const pct = hasLimit ? (spentINR / limitINR) * 100 : 0;
+          const status = getProgressStatus(pct); // 'safe' (<80%) | 'warning' (80-99%) | 'danger' (100%+)
 
           return (
-            <article key={cat} className={`budget-card ${isOver ? 'budget-card--over' : ''}`}>
+            <article key={cat} className={`budget-card budget-card--${status}`}>
               <div className="budget-card__header">
-                <h2 className="budget-card__category">{cat}</h2>
+                <div className="budget-card__title-row">
+                  <h2 className="budget-card__category">{cat}</h2>
+                  {hasLimit && (
+                    <span className={`budget-alert-pill budget-alert-pill--${status}`}>
+                      {status === 'danger' && 'Exceeded'}
+                      {status === 'warning' && 'Near Limit'}
+                      {status === 'safe' && 'On Track'}
+                    </span>
+                  )}
+                </div>
                 <button
                   type="button"
                   className="budget-card__edit-btn"
@@ -231,10 +241,21 @@ export default function Budgets() {
                   </div>
 
                   <div className="budget-card__remaining">
-                    {isOver
-                      ? <span className="budget-card__remaining--over">Over by {fmt(Math.abs(remainingINR))}</span>
-                      : <span className="budget-card__remaining--ok">{fmt(remainingINR)} remaining</span>
-                    }
+                    {status === 'danger' && (
+                      <span className="budget-card__remaining--over">
+                        Over by {fmt(Math.abs(remainingINR))}
+                      </span>
+                    )}
+                    {status === 'warning' && (
+                      <span className="budget-card__remaining--warning">
+                        {fmt(remainingINR)} remaining (near limit)
+                      </span>
+                    )}
+                    {status === 'safe' && (
+                      <span className="budget-card__remaining--ok">
+                        {fmt(remainingINR)} remaining
+                      </span>
+                    )}
                   </div>
 
                   <ProgressBar value={spentINR} max={limitINR} showPercent />

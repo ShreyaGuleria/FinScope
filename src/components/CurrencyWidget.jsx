@@ -15,6 +15,7 @@ export default function CurrencyWidget() {
   const [status, setStatus] = useState('loading'); // 'loading' | 'ready'
   const [source, setSource] = useState(null);       // 'live' | 'cached' | 'fallback'
   const [updatedAt, setUpdatedAt] = useState(null);
+  const [hasFailed, setHasFailed] = useState(false);
 
   /* Guard against state updates after unmount */
   const isMounted = useRef(true);
@@ -29,18 +30,19 @@ export default function CurrencyWidget() {
     if (!isMounted.current) return;
     setStatus('loading');
 
-    const result = await getExchangeRates();
+    const result = await getExchangeRates(isManualRetry);
 
     if (!isMounted.current) return;
 
     setExchangeRates(result.rates);
     setSource(result.source);
     setUpdatedAt(result.updatedAt);
+    setHasFailed(Boolean(result.failed));
     setStatus('ready');
 
-    if (result.source === 'fallback') {
-      showToast('Using offline exchange rates', 'warning');
-    } else if (isManualRetry && result.source === 'live') {
+    if (result.failed) {
+      showToast('Failed to update exchange rates', 'warning');
+    } else if (isManualRetry) {
       showToast('Live rates updated', 'success');
     }
   }, [setExchangeRates, showToast]);
@@ -79,26 +81,19 @@ export default function CurrencyWidget() {
         </span>
       );
     }
-    if (source === 'live') {
+    if (hasFailed) {
       return (
-        <span className="currency-badge currency-badge--live">
+        <span className="currency-badge currency-badge--offline">
           <span className="currency-badge__dot" aria-hidden="true" />
-          Live
+          Update failed
         </span>
       );
     }
-    if (source === 'cached') {
-      return (
-        <span className="currency-badge currency-badge--cached">
-          <span className="currency-badge__dot" aria-hidden="true" />
-          Cached {updatedAt ? `· ${formatCachedTime(updatedAt)}` : ''}
-        </span>
-      );
-    }
+    const displayTime = formatCachedTime(updatedAt) || formatCachedTime(new Date().toISOString());
     return (
-      <span className="currency-badge currency-badge--offline">
+      <span className="currency-badge currency-badge--live">
         <span className="currency-badge__dot" aria-hidden="true" />
-        Offline rates
+        Rates updated {displayTime}
       </span>
     );
   }
@@ -125,7 +120,7 @@ export default function CurrencyWidget() {
 
       <div className="currency-widget__status">
         {renderSourceBadge()}
-        {status === 'ready' && source !== 'live' && (
+        {status === 'ready' && hasFailed && (
           <button
             type="button"
             className="currency-widget__retry"

@@ -71,7 +71,7 @@
 .transaction-card__actions {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
+  gap: 0.5rem;
 }
 
 .transaction-card__amount {
@@ -79,6 +79,7 @@
   font-size: 0.9375rem;
   font-weight: 600;
   letter-spacing: -0.01em;
+  margin-right: 0.5rem;
 }
 
 .transaction-card__amount--income {
@@ -89,21 +90,46 @@
   color: #f87171;
 }
 
+/* ── Icon buttons: square, icon-only ── */
+.transaction-card__edit-btn,
 .transaction-card__delete-btn {
-  background: transparent;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  padding: 0.25rem 0.4rem;
-  color: var(--color-text-dim);
-  font-size: 0.75rem;
-  border-radius: 4px;
   transition: all 150ms ease;
-  opacity: 0.4;
+  flex-shrink: 0;
 }
 
-.transaction-card__delete-btn:hover {
-  opacity: 1;
-  color: var(--color-danger-light);
-  background: rgba(244, 63, 94, 0.15);
+/* Edit — blue tint, always visible */
+.transaction-card__edit-btn {
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: var(--color-primary-light);
 }
 
+.transaction-card__edit-btn:hover,
+.transaction-card__edit-btn:focus-visible {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: var(--color-primary);
+  color: #fff;
+  outline: none;
+}
+
+/* Delete — red tint, clearly visible at rest, brighter on hover */
+.transaction-card__delete-btn {
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  color: #fb7185;
+}
+
+.transaction-card__delete-btn:hover,
+.transaction-card__delete-btn:focus-visible {
+  background: rgba(244, 63, 94, 0.25);
+  border-color: var(--color-danger);
+  color: #fff;
+  outline: none;
+}

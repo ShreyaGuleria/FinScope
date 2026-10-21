@@ -8,7 +8,7 @@ import './ProgressBar.css';
 // eslint-disable-next-line react/only-export-components
 export function getProgressStatus(percent) {
   if (percent >= 100) return 'danger';
-  if (percent >= 70) return 'warning';
+  if (percent >= 80) return 'warning';
   return 'safe';
 }
 

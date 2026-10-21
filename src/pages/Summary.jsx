@@ -20,15 +20,26 @@ export default function Summary() {
 
   const monthlyData = Object.values(monthlyMap).sort((a, b) => (b.month > a.month ? 1 : -1));
 
-  // Group by Category
-  const categoryMap = transactions.reduce((acc, t) => {
-    const cat = t.category || 'Other';
-    if (!acc[cat]) acc[cat] = 0;
-    acc[cat] += Number(t.amount);
-    return acc;
-  }, {});
+  // Group by Category (Income vs Expense)
+  const incomeCategoryMap = transactions
+    .filter((t) => t.type === 'Income')
+    .reduce((acc, t) => {
+      const cat = t.category || 'Other';
+      if (!acc[cat]) acc[cat] = 0;
+      acc[cat] += Number(t.amount);
+      return acc;
+    }, {});
+  const incomeCategoryData = Object.entries(incomeCategoryMap).sort((a, b) => b[1] - a[1]);
 
-  const categoryData = Object.entries(categoryMap).sort((a, b) => b[1] - a[1]);
+  const expenseCategoryMap = transactions
+    .filter((t) => t.type === 'Expense')
+    .reduce((acc, t) => {
+      const cat = t.category || 'Other';
+      if (!acc[cat]) acc[cat] = 0;
+      acc[cat] += Number(t.amount);
+      return acc;
+    }, {});
+  const expenseCategoryData = Object.entries(expenseCategoryMap).sort((a, b) => b[1] - a[1]);
 
   const fmt = (val) =>
     val.toLocaleString('en-IN', { style: 'currency', currency: 'INR' });
@@ -81,13 +92,38 @@ export default function Summary() {
           {/* Category Breakdown */}
           <div className="summary-card-categories">
             <h2 className="summary-section-title">Category Volume</h2>
-            <div className="category-grid">
-              {categoryData.map(([cat, total]) => (
-                <div key={cat} className="category-card">
-                  <span className="category-card__name">{cat}</span>
-                  <span className="category-card__total">{fmt(total)}</span>
-                </div>
-              ))}
+            <div className="category-sections">
+              <div className="category-section">
+                <h3 className="category-section__heading text-income">Income</h3>
+                {incomeCategoryData.length === 0 ? (
+                  <p className="category-empty-text">No income transactions.</p>
+                ) : (
+                  <div className="category-grid">
+                    {incomeCategoryData.map(([cat, total]) => (
+                      <div key={cat} className="category-card">
+                        <span className="category-card__name">{cat}</span>
+                        <span className="category-card__total text-income">+{fmt(total)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="category-section">
+                <h3 className="category-section__heading text-expense">Expense</h3>
+                {expenseCategoryData.length === 0 ? (
+                  <p className="category-empty-text">No expense transactions.</p>
+                ) : (
+                  <div className="category-grid">
+                    {expenseCategoryData.map(([cat, total]) => (
+                      <div key={cat} className="category-card">
+                        <span className="category-card__name">{cat}</span>
+                        <span className="category-card__total text-expense">-{fmt(total)}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </>
